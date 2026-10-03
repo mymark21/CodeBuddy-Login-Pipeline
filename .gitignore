@@ -1,0 +1,4 @@
+# never publish credentials
+*.state
+*.json
+!package.json

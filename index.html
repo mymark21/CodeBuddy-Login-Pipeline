@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<title>CodeBuddy 登录二维码</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+         font:16px/1.5 system-ui, -apple-system, "Segoe UI", "Noto Sans SC", sans-serif;
+         background:#0f1115; color:#e8eaed; }
+  .card { background:#181b22; border:1px solid #262a33; border-radius:16px; padding:28px 32px;
+          text-align:center; max-width:min(92vw, 460px); box-shadow:0 12px 40px rgba(0,0,0,.45); }
+  h1 { font-size:19px; margin:0 0 4px; font-weight:600; }
+  .sub { font-size:13px; color:#9aa0aa; margin-bottom:18px; }
+  img { width:min(340px, 78vw); height:auto; image-rendering:pixelated;
+        background:#fff; padding:14px; border-radius:12px; display:block; margin:0 auto; }
+  .meta { margin-top:18px; font-size:13px; color:#9aa0aa; line-height:1.8; }
+  .meta b { color:#e8eaed; font-weight:600; }
+  .warn { margin-top:16px; font-size:12px; color:#f0b429; }
+  a { color:#7aa2f7; }
+  .row { display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .btn { display:inline-block; padding:9px 16px; border-radius:9px; background:#20242c;
+         border:1px solid #2d323c; color:#e8eaed; text-decoration:none; font-size:13px; }
+  .btn:hover { background:#262b34; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>CodeBuddy 登录二维码</h1>
+    <div class="sub">用微信「扫一扫」扫描下方二维码</div>
+    <img id="qr" src="current/qr-3x.png" alt="QR" onerror="this.onerror=null;this.src='current/qr.png'">
+    <div class="meta">
+      更新于 <b id="ts">—</b><br>
+      剩余有效期 <b id="left">—</b>
+    </div>
+    <div class="warn">二维码约 10 分钟过期；过期后刷新本页（每次捕获会覆盖 current/）</div>
+    <div class="row">
+      <a class="btn" href="./">刷新页面</a>
+      <a class="btn" href="archive/">历史归档</a>
+    </div>
+  </div>
+<script>
+const CAPTURED = "__CAPTURED_AT__";      // ISO string injected by publish
+const TTL = 600;                          // seconds
+const t0 = Date.parse(CAPTURED) || Date.now();
+const elTs = document.getElementById('ts'), elLeft = document.getElementById('left');
+elTs.textContent = new Date(t0).toLocaleString();
+function tick() {
+  const left = Math.max(0, TTL - (Date.now() - t0) / 1000);
+  const m = Math.floor(left / 60), s = Math.floor(left % 60);
+  elLeft.textContent = left > 0 ? `${m} 分 ${String(s).padStart(2,'0')} 秒` : '已过期';
+  elLeft.style.color = left > 0 ? '#3ddc84' : '#f85149';
+}
+tick(); setInterval(tick, 1000);
+// keep the image itself uncached
+document.getElementById('qr').src = 'current/qr-3x.png?t=' + Date.now();
+</script>
+</body>
+</html>
